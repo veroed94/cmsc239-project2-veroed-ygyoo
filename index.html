@@ -11,6 +11,27 @@
   </head>
   <body>
     <div id="app" class="flex center"></div>
+    <div id="kmeans" class="main content">
+    <div>
+      <button id = "centroid">Centroid</button>
+      <button id = "cluster">Cluster</button>
+      <button id = "restart">Restart</button>
+    </div>
+    <fieldset style = "display: inline; margin .8em 0 1em 0; border: 1px solid #999; padding: .5em">
+      <div>
+        <label for = "n" > n (# of data points):</label>
+        <input type = "number" id = "n" min = "10" max = "100" value = "30">
+      </div>
+      <div>
+        <label for = "k" > k (# of cluster centroids):</label>
+        <input type = "number" id = "k" min = "2" max = "10" value = "3">
+      </div>
+      <div>
+        <button id = "generate">Generate</button>
+      </div>
+    </fieldset>
+    </div>
+
     <script src="bundle.js"></script>
   </body>
 </html>
