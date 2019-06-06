@@ -1,10 +1,11 @@
 import React from 'react';
 import {csv} from 'd3-fetch';
-import ExampleChart from './example-chart';
-import {longBlock} from './example-chart';
+import {json} from 'd3';
+import {mickey} from './example-chart';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
 import {symbol, symbolTriangle} from 'd3-shape';
+
 
 class RootComponent extends React.Component {
   constructor() {
@@ -31,12 +32,7 @@ class RootComponent extends React.Component {
       return <h1>LOADING</h1>;
     }
     return (
-      <div className="relative">
-        <h1> Hello Explainable!</h1>
-        <div>{`The example data was loaded! There are ${data.length} rows`}</div>
-        <ExampleChart data={data}/>
-        <div>{longBlock}</div>
-      </div>
+      <h2> I am testing </h2>
     );
   }
 }
@@ -44,34 +40,53 @@ RootComponent.displayName = 'RootComponent';
 export default RootComponent;
 
 
-// From here is my code for testing
-const status = false;
 
 
 const width = 500;
 const height = 500;
 
-const svg = select('#kmeans')
+const margin = width * 0.05;
+const innerWidth = width - 2 * margin;
+const innerHeight = height - 2 * margin;
+
+const svg = select('#vis')
   .append('svg')
+  .attr('id', 'mainvis')
   .attr('width', width)
   .attr('height', height)
+  .attr('margin', 'auto')
+  .attr('align', 'center')
 
+/* 버튼 조정하는 법
 select("#centroid")
   .style('padding', '.5em .8em')
   .style('background-color', 'blue')
   .style('color', 'white')
   .style('font-size', '16px')
+*/
+const background = svg.append('g')
+  .style('transform', 'translate(5%, 5%)')
 
-const dataGroup = svg.append('g');
-const centroidGroup = svg.append('g');
-const lineGroup = svg.append('g');
+const dataGroup = background.append('g');
+const centroidGroup = background.append('g');
+const lineGroup = background.append('g');
 let clusters = [];
 let dataPoints = [];
 
+function wipeOut() {
+  clusters = [];
+  dataPoints = [];
+}
+
 function updateCentroid() {
+  const origCenter = [];
+  const newCenter = [];
   clusters.forEach(function(group, i) {
     if (group.dataPoints.length == 0)
       return;
+
+    origCenter.push(group.center.x)
+    origCenter.push(group.center.y)
 
     let x = 0;
     let y = 0;
@@ -84,13 +99,33 @@ function updateCentroid() {
       x: x / group.dataPoints.length,
       y: y / group.dataPoints.length
     };
+    newCenter.push(group.center.x)
+    newCenter.push(group.center.y)
   });
+
+  if (compareResult(origCenter, newCenter)) {
+    alert('Converged!')
+  }
+  select("#cent1").attr("disabled", "disabled");
+  select("#cent2").attr("disabled", "disabled");
+  select("#clust1").attr("disabled", null);
+  select("#clust2").attr("disabled", null);
+}
+function compareResult(origL, newL) {
+  let checker = true;
+  for (let i = 0; i < origL.length; i++) {
+    if (origL[i] != newL[i]) {
+      checker = false
+    }
+  }
+  return checker;
 }
 
 function updateCluster() {
   clusters.forEach(function update(g) {
     g.dataPoints = [];
   });
+
   dataPoints.forEach(function regroup(point) {
     let min = Infinity;
     let group;
@@ -105,6 +140,10 @@ function updateCluster() {
     group.dataPoints.push(point);
     point.group = group;
   });
+  select("#cent1").attr("disabled", null);
+  select("#cent2").attr("disabled", null);
+  select("#clust1").attr("disabled", "disabled");
+  select("#clust2").attr("disabled", "disabled");
 }
 
 function draw() {
@@ -122,7 +161,7 @@ function draw() {
     .attr('r', 5)
     .attr('fill', d => d.group ? d.group.color : 'black');
 
-  if (dataPoints[0].group) {
+  if (dataPoints[0].group.center) {
     let l = lineGroup.selectAll('line')
       .data(dataPoints);
     let updateLine = function drawLines(line) {
@@ -133,6 +172,7 @@ function draw() {
         .attr('y2', d => d.group.center.y)
         .attr('stroke', d => d.group.color);
     };
+
     updateLine(l.enter().append('line'));
     updateLine(l.transition().duration(1000));
     l.exit().remove();
@@ -161,36 +201,14 @@ function draw() {
   drawCenter(c.transition().duration(1000));
 }
 
-function init() {
+function initData() {
   const n = parseInt(select('#n')._groups[0][0].value, 10);
-  const k = parseInt(select('#k')._groups[0][0].value, 10);
-  clusters = [];
-  let i = 0;
-  for (i; i < k; i++) {
-    let g = {
-      points: [],
-      color: 'hsl(' + (i * 360 / k ) + ', 100%, 50%)',
-      center: {
-        x: Math.random() * width,
-        y: Math.random() * height
-      },
-      init: {
-        center: {}
-      }
-    };
-    g.init.center = {
-      x: g.center.x,
-      y: g.center.y
-    };
-    clusters.push(g);
-  }
-
   dataPoints = [];
-
+  let i = 0;
   for (i = 0; i < n; i++) {
     let point = {
-      x: Math.random() * width,
-      y: Math.random() * height,
+      x: Math.random() * innerWidth,
+      y: Math.random() * innerHeight,
       group: undefined
     };
     point.init = {
@@ -202,28 +220,77 @@ function init() {
   }
 }
 
-function restart() {
-  cluster.forEach(function rebuild(g) {
-    g.dataPoints = [];
-    g.center.x = g.init.center.x;
-    g.center.y = g.init.center.y;
-  });
+function initCentroid() {
+  const k = parseInt(select('#k')._groups[0][0].value, 10);
+  clusters = [];
   let i = 0;
-  for (i; i < dataPoints.length; i++) {
-    const point = dataPoints[i];
-    dataPoints[i] = {
-      x: point.init.x,
-      y: point.init.y,
-      group: undefined,
-      init: point.init
+  for (i; i < k; i++) {
+    let g = {
+      points: [],
+      color: 'hsl(' + (i * 360 / k ) + ', 100%, 50%)',
+      center: {
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight
+      },
+      init: {
+        center: {}
+      }
     };
+    g.init.center = {
+      x: g.center.x,
+      y: g.center.y
+    };
+    clusters.push(g);
   }
 }
 
+function mickeyMouse() {
+  dataPoints = [];
+  clusters = [];
+  let i = 0;
+  let j = 0;
+  const k = mickey.centroid.length
+  for (i = 0; i < k; i++) {
+    let n = mickey.points[i].length
+    for (j = 0; j < n; j++) {
+      let point = {
+        x: mickey.points[i][j][0] * innerWidth,
+        y: mickey.points[i][j][1] * innerHeight,
+        group: {color: 'hsl(' + (i * 360 / k) + ', 100%, 50%)'
+        }
+      };
+      point.init = {
+        x: point.x,
+        y: point.y,
+        group: point.group
+      };
+      dataPoints.push(point);
+    }
 
-select('#centroid').on('click', function() {updateCentroid(); draw(); });
-select('#cluster').on('click', function() {updateCluster(); draw(); });
-select('#generate').on('click', function() {init(); draw(); });
+    let g = {
+      points: [],
+      color: 'hsl(' + (i * 360 / k) + ', 100%, 50%)',
+      center: {
+        x: mickey.centroid[i][0] * innerWidth,
+        y: mickey.centroid[i][1] * innerHeight
+      },
+      init: {
+        center: {}
+      }
+    };
+    g.init.center = {
+      x: g.center.x,
+      y: g.center.y
+    };
+    clusters.push(g);
+  }
+};
 
+select('#cent1').on('click', function() {updateCentroid(); draw(); });
+select('#clust1').on('click', function() {updateCluster(); draw(); });
+select('#new1').on('click', function() {wipeOut(); mickeyMouse(); draw(); });
+select('#gen1').on('click', function() {initCentroid(); draw(); });
+select('#cent2').on('click', function() {updateCentroid(); draw(); });
+select('#clust2').on('click', function() {updateCluster(); draw(); });
 
-init(); draw();
+initData(); draw();

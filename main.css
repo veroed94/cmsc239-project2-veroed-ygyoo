@@ -17,6 +17,10 @@
   max-width: 1000px;
 }
 
+.tab {
+  margin-left: 30px;
+}
+
 .center {
   align-items: center;
   justify-content: center;
@@ -98,4 +102,27 @@
   font-size: 10px;
   padding: 6px;
   text-transform: uppercase;
+}
+
+
+#sections {
+position: relative;
+display: inline-block;
+width: 400px;
+margin-left: 200px;
+top: 0px;
+z-index: 90;
+}
+
+.step {
+margin-bottom: 200px;
+}
+
+#vis {
+display: inline-block;
+position: fixed;
+z-index: 1;
+margin-left: 0;
+text-align: center;
+background-color: #ddd;
 }

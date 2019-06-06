@@ -6,32 +6,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link href="main.css"  type="text/css" rel="stylesheet" />
-
     <link rel="stylesheet" href="https://unpkg.com/react-vis/dist/style.css">
   </head>
   <body>
-    <div id="app" class="flex center"></div>
-    <div id="kmeans" class="main content">
-    <div>
-      <button id = "centroid">Centroid</button>
-      <button id = "cluster">Cluster</button>
-      <button id = "restart">Restart</button>
+    <div id='allcontents'>
+      <div id="sections">
+        <h1>K-means Clustering Explained</h1>
+        <h2>I. Introduction </h2>
+          <p>Clustering is a technique for finding similarity groups (clusters) in a data.
+          It groups a set of data points together by their similarity. It is the main task
+          of exploratory data mining used in various fields such as machine learning, image analysis,
+          and pattern recognition. Clustering requires that the dataset is assigned to a number of
+          labels according to the chosen characteristics of the dataset. Say we have a dataset in
+          which inputs are a number of animals. Then, a variable can be chosen according to
+          a chosen characteristic, such as whether they have fur or not, then two labels
+          will be “YES” or “NO” where we can form two clusters.</p>
+          <p>In some cases, we may not have much information about the variables. In order to
+          perform a clustering analysis in such case, our goal is to find the relevant patterns
+          that belong to a set, and find a number of sets that are mutually exclusive of each
+          other in order to group the data into these sets properly. This is called unsupervised
+          learning.</p>
+          <p>K-means clustering is one of the most common methods of unsupervised learning algorithm
+          that finds a fixed number of clusters in a set of data. As the name shows, it clusters
+          a set of data into ‘k’ clusters.</p>
+        <h2>II. Steps of K-means Clustering</h2>
+          <p>So how do we assign the data points into such clusters? The key to k-means clustering
+          is that it randomly generates 'centroids' that should be the center of the cluster,
+          and label the clusters according to their Euclidean distance.</p>
+          <p> There are 5 steps of K-means Clustering </p>
+          <p class='tab'> 1. Choosing the dataset </p>
+          <p class='tab'> 2. Create centroids </p>
+          <p class='tab'> 3. Cluster data to centroids </p>
+          <p class='tab'> 4. Update centroid locations </p>
+          <p class='tab'> 5. Convergence </p>
+          <p>In this section, we will be breaking down the algorithm in each steps and see what
+           is actually happening when we run the algorithm.</p>
+        <h3>1. Choose a dataset</h3>
+          <p>First, we should be choosing a dataset that we would like to analyze. For simplicity
+          we will be using a 2-dimensional space with X, Y axes as inputs. Choose a number and
+          press NEW to create a space with randomly dispersed data points.</p>
+          <fieldset style = "display: inline; margin .8em 0 1em 0; border: 1px solid #999; padding: .5em">
+            <div>
+              <label for = "n" > n (# of data points):</label>
+              <input type = "number" id = "n" min = "10" max = "300" value = "300">
+              <button class = "new" id = new1>New</button>
+            </div>
+          </fieldset>
+        <h3>2. Randomly define centroids.</h3>
+          <p>K-means starts by randomly defining the centroids. Again, choose ‘k’, the number
+          of centroids, and press GENERATE to randomly place the centroids.</p>
+          <fieldset style = "display: inline; margin .8em 0 1em 0; border: 1px solid #999; padding: .5em">
+            <div>
+              <label for = "k" > k (# of centroids):</label>
+              <input type = "number" id = "k" min = "2" max = "10" value = "10">
+              <button class = "generate" id = gen1>Generate</button>
+            </div>
+          </fieldset>
+          <p>Great! So far, you will see randomly dispersed data points represented in black
+          dots, and triangles of some colors that represent the centroids</p>
+        <h3>3. Clustering</h3>
+          <p>K-means algorithm then assigns each data point to the closest corresponding
+          centroid, using standard Euclidean distance. Press Cluster to find the closest
+          centroid for each data point.</p>
+          <button class = 'cluster' id = clust1>Cluster</button>
+          <p>Now, you can see that the data points are connected to the closest centroids.
+          Notice that there are no data points that do not have a centroid group assigned.
+          It is important that all data points are assigned a group. Also, depending
+          on the shape of the data points and location of centroids, you may see
+          that assigning the data to the closest centroid does not form a clear cluster at
+          first attempt. To start, the centroid is not even at the center of the
+          data points.</p>
+        <h3>4. Update Centroid</h3>
+          <p>Therefore, for each centroid, we now assign the new location of the
+          centroid as the mean of all the values in the same group. Press CENTROID
+          to update the location of the centroid.</p>
+          <button class = 'centroid' id = cent1>Centroid</button>
+          <p>Great Job! You have now assigned the new location for the centroid to
+          be the center of your group you assigned in step 3. Notice that some data
+          points became farther from the centroid while some became closer to the
+          centroid in this process.</p>
+         <h3>5. Convergence</h3>
+          <p>As described in part 4, some data points may be farther from the updated
+            centroid, resulting in the data point becoming closer to a different
+            centroid. Therefore, we repeat steps 3 & 4 until we see that the centroid
+            and clusters are no longer updated (converged). Once we meet convergence,
+            we can say that the data points are accurately grouped.</p>
+          <p> Repeat each steps of clustering and centroid until there is no change
+            to the image (converged). Once the algorithm is converged, an alert will
+            appear.</p>
+            <button class = 'cluster' id = clust2>Cluster</button>
+            <button class = 'centroid' id = cent2>Centroid</button>
+          <p>Now look at the image you created. Do the created groups look like a
+            fair clustering to you? What will happen to your clustering process if
+            you change the number of centroids? What if you use a different dataset?
+            Try changing the dataset or the number of centroids and rerun the algorithm.
+            What do you see this time? What do you think is required in order to adequately
+            form clusters for a given dataset?</p>
+          <h2>III. Limitations to K-means</h2>
+            <p>You may have run several trials of k-means through random generation,
+              and saw that sometimes the clustering algorithm worked very well whereas
+              in some cases the clustering was not much effective.</p>
+            <p>Below we prepared some sample datasets and cluster points to show some
+              limitations to the K-means algorithm. Look at the shape of the dataset
+              and the initial clustering centers. Why do you think the clustering
+              failed through the K-means algorithm? What are the limitations of
+              K-means? What do you think can be done in order to overcome this
+              problem?</p>
+           <h3>1. Mickey Mouse</h3>
+             <p>One clear limitation of k-means is that clustering of data relies
+               on the assumption that each cluster should be of similar size. We
+               can see that in this dataset there are three clusters, one being a
+               much larger one than the others. Yet, because k-means simply compares
+               the Euclidean distance of each datapoint from the clusters, you can
+               see that the algorithm does not capture the true clusters of the
+               original data set.</p>
+            <h3>2. Spectral Clustering</h3>
+              <p>K-means cluster model is based on spherical clustering, so that
+                the mean converges towards each centroids. Therefore, in case where
+                datasets have clear non-spherical trends as in the spectral image,
+                we can see that the k-means algorithm is ineffective. </p>
+            <h3>3. Over / Under Clustering</h3>
+             <p>K-means clustering is an effective method when there are clear spherical
+               clusters, but it is also important that the user must have a rough
+               idea of how many clusters there may be in the dataset. If not, the
+               algorithm ends up over / under clustering. In the example, we see
+               that even with clear clusters visible in the original data, the lack
+               of centroids cause the algorithm to have strange clusters. </p>
+            <h3>4. Adequate initial points</h3>
+              <p>Finally, K-means clustering randomly initialize the clustering
+                centers, which can sometimes change the result of clustering. That
+                is, even on the same dataset, depending on the point of initialization,
+                the algorithm may end up with different clustering results. The
+                example shows a case in which two different initialization cases
+                end up in different clustering results. What do you think about
+                the results? What are some of the risks of randomly initializing
+                cluster centers?</p>
+            <h2>Conclusion</h2>
+              <p>Due to its simplicity, the k-means algorithm delivers training
+                results quickly and effectively. However, as we seen in the above
+                examples, there are clear limitations which makes the performance
+                less competitive compared to other sophisticated clustering techniques.
+                Nevertheless, k-means algorithm gave hint to lots of different methods
+                of clustering that were created to solve the limitations of k-means,
+                such as k-means ++,  EM algorithm, and spectral clustering algorithm;
+                and it is still one of the most commonly used unsupervised machine
+                learning technique for data cluster analysis. </p>
+      </div>
+    <div id='vis'>
     </div>
-    <fieldset style = "display: inline; margin .8em 0 1em 0; border: 1px solid #999; padding: .5em">
-      <div>
-        <label for = "n" > n (# of data points):</label>
-        <input type = "number" id = "n" min = "10" max = "100" value = "30">
-      </div>
-      <div>
-        <label for = "k" > k (# of cluster centroids):</label>
-        <input type = "number" id = "k" min = "2" max = "10" value = "3">
-      </div>
-      <div>
-        <button id = "generate">Generate</button>
-      </div>
-    </fieldset>
     </div>
-
     <script src="bundle.js"></script>
   </body>
 </html>
