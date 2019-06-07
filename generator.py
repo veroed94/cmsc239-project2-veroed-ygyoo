@@ -32,9 +32,9 @@ def create_block():
 
 	t = (5 * math.sqrt(2)) - 3
 
-	coord1 = gen_dist(25, 0.15, 0.4, 0.9)
-	coord2 = gen_dist(25, 0.15, 0.8, 0.2)
-	coord3 = gen_dist(250, 0.15, 0.2, 0.2)
+	coord1 = gen_dist(100, 0.25, 0.4, 0.7)
+	coord2 = gen_dist(100, 0.25, 0.8, 0.4)
+	coord3 = gen_dist(100, 0.25, 0.2, 0.2)
 
 	point.append(coord1)
 	point.append(coord2)

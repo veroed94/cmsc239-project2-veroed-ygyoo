@@ -1,10 +1,10 @@
 import React from 'react';
 import {csv} from 'd3-fetch';
 import {json} from 'd3';
-import {mickey} from './example-chart';
+import {examples} from './example-chart';
 import {select} from 'd3-selection';
 import {transition} from 'd3-transition';
-import {symbol, symbolTriangle} from 'd3-shape';
+import {symbol, symbolCross} from 'd3-shape';
 
 
 export function kmeans() {
@@ -110,19 +110,19 @@ function config() {
   }
 
   function draw() {
-    let dataMarks = dataGroup.selectAll('circle')
+    const dataMarks = dataGroup.selectAll('circle')
       .data(dataPoints);
-    dataMarks
-      .enter()
-      .append('circle');
+
+    let updatePoint = function(points) {
+      points
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+        .attr('r', 5)
+        .attr('fill', d => d.group ? d.group.color : 'black');
+    }
+    updatePoint(dataMarks.enter().append('circle'));
+    updatePoint(dataMarks.transition().duration(1000));
     dataMarks.exit().remove();
-    dataMarks
-      .transition()
-      .duration(1000)
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y)
-      .attr('r', 5)
-      .attr('fill', d => d.group ? d.group.color : 'black');
 
     if (dataPoints[0].group) {
       let l = lineGroup.selectAll('line')
@@ -156,16 +156,17 @@ function config() {
         })
         .attr('stroke', 'black');
     };
+
     c.exit().remove();
+
     drawCenter(c.enter()
       .append('path')
-      .attr('d', symbol().type(symbolTriangle))
+      .attr('d', symbol().type(symbolCross))
       .attr('stroke', 'black'));
     drawCenter(c.transition().duration(1000));
   }
 
   function initData() {
-    console.log(dataPoints)
     let n = parseInt(select('#n')._groups[0][0].value, 10);
     dataPoints = [];
     let i = 0;
@@ -185,7 +186,7 @@ function config() {
   }
 
   function initCentroid() {
-    let k = parseInt(select('#k')._groups[0][0].value, 10);
+    let k = parseInt(select('.k')._groups[0][0].value, 10);
     clusters = [];
     let i = 0;
     for (i; i < k; i++) {
@@ -208,18 +209,18 @@ function config() {
     }
   }
 
-  function mickeyMouse() {
+  function exampleGen(input) {
     dataPoints = [];
     clusters = [];
     let i = 0;
     let j = 0;
-    let k = mickey.centroid.length
+    let k = examples[input].centroid.length
     for (i = 0; i < k; i++) {
-      let n = mickey.points[i].length
+      let n = examples[input].points[i].length
       for (j = 0; j < n; j++) {
         let point = {
-          x: mickey.points[i][j][0] * innerWidth,
-          y: mickey.points[i][j][1] * innerHeight,
+          x: examples[input].points[i][j][0] * innerWidth,
+          y: examples[input].points[i][j][1] * innerHeight,
           group: {color: 'hsl(' + (i * 360 / k) + ', 100%, 50%)'
           }
         };
@@ -235,8 +236,8 @@ function config() {
         points: [],
         color: 'hsl(' + (i * 360 / k) + ', 100%, 50%)',
         center: {
-          x: mickey.centroid[i][0] * innerWidth,
-          y: mickey.centroid[i][1] * innerHeight
+          x: examples[input].centroid[i][0] * innerWidth,
+          y: examples[input].centroid[i][1] * innerHeight
         },
         init: {
           center: {}
@@ -250,6 +251,62 @@ function config() {
     }
   };
 
+  function drawPremade() {
+    const dataMarks = dataGroup.selectAll('circle')
+      .data(dataPoints);
+
+    let updatePoint = function(points) {
+      points
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+        .attr('r', 5)
+        .attr('fill', d => d.group ? d.group.color : 'black');
+    }
+    updatePoint(dataMarks.enter().append('circle'));
+    updatePoint(dataMarks.transition().duration(1000));
+    dataMarks.exit().remove();
+
+    if (dataPoints[0].group.center) {
+      let l = lineGroup.selectAll('line')
+        .data(dataPoints);
+      let updateLine = function drawLines(line) {
+        line
+          .attr('x1', d => d.x)
+          .attr('y1', d => d.y)
+          .attr('x2', d => d.group.center.x)
+          .attr('y2', d => d.group.center.y)
+          .attr('stroke', d => d.group.color);
+      };
+
+      updateLine(l.enter().append('line'));
+      updateLine(l.transition().duration(1000));
+      l.exit().remove();
+    } else {
+      lineGroup.selectAll('line').remove();
+    }
+
+    const c = centroidGroup.selectAll('path')
+      .data(clusters);
+
+    let drawCenter = function drawCenters(center) {
+      center
+        .attr('transform', function loc(d) {
+          return 'translate(' + d.center.x + ',' + d.center.y +') rotate(45)';
+        })
+        .attr('fill', function(d, i) {
+          return d.color;
+        })
+        .attr('stroke', 'black');
+    };
+
+    c.exit().remove();
+
+    drawCenter(c.enter()
+      .append('path')
+      .attr('d', symbol().type(symbolCross))
+      .attr('stroke', 'black'));
+    drawCenter(c.transition().duration(1000));
+  }
 
   select('#cent1').on('click', function() {updateCentroid(); draw(); });
   select('#clust1').on('click', function() {updateCluster(); draw(); });
@@ -258,7 +315,23 @@ function config() {
   select('#cent2').on('click', function() {updateCentroid(); draw(); });
   select('#clust2').on('click', function() {updateCluster(); draw(); });
   select('#restart1').on('click', function() {restart(); draw(); })
+  select('#mickey').on('click', function() {exampleGen('mickey'); drawPremade(); })
+  select('#spectral').on('click', function() {exampleGen('spectral'); drawPremade(); })
+  select('#overunder').on('click', function() {exampleGen('overunder'); drawPremade(); })
+  select('#overunder2').on('click', function() {exampleGen('overunder2'); drawPremade(); })
+  select('#adequate').on('click', function() {exampleGen('adequate'); drawPremade(); })
+  select('#adequate2').on('click', function() {exampleGen('adequate2'); drawPremade(); })
+  select('#cent3').on('click', function() {updateCentroid(); draw(); });
+  select('#clust3').on('click', function() {updateCluster(); draw(); });
+  select('#cent4').on('click', function() {updateCentroid(); draw(); });
+  select('#clust4').on('click', function() {updateCluster(); draw(); });
+  select('#cent5').on('click', function() {updateCentroid(); draw(); });
+  select('#clust5').on('click', function() {updateCluster(); draw(); });
+  select('#cent6').on('click', function() {updateCentroid(); draw(); });
+  select('#clust6').on('click', function() {updateCluster(); draw(); });
+  select('#gen2').on('click', function() {initCentroid(); draw(); });
   initData(); draw();
+
 }
 
 /* 버튼 조정하는 법

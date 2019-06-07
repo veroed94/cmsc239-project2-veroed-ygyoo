@@ -50,7 +50,6 @@
               <label for = "n" > n (# of data points):</label>
               <input type = "number" id = "n" min = "10" max = "500" value = "500">
               <button class = "new" id = new1>New</button>
-              <button class = "restart" id = restart1>Restart</button>
             </div>
           </fieldset>
         <h3>2. Randomly define centroids.</h3>
@@ -59,7 +58,7 @@
           <fieldset style = "display: inline; margin .8em 0 1em 0; border: 1px solid #999; padding: .5em">
             <div>
               <label for = "k" > k (# of centroids):</label>
-              <input type = "number" id = "k" min = "2" max = "10" value = "10">
+              <input type = "number" class = "k" min = "2" max = "10" value = "10">
               <button class = "generate" id = gen1>Generate</button>
             </div>
           </fieldset>
@@ -121,11 +120,17 @@
                the Euclidean distance of each datapoint from the clusters, you can
                see that the algorithm does not capture the true clusters of the
                original data set.</p>
+              <button class = 'mickey' id = mickey>Generate</button>
+              <button class = 'cluster' id = clust3>Cluster</button>
+              <button class = 'centroid' id = cent3>Centroid</button>
             <h3>2. Spectral Clustering</h3>
               <p>K-means cluster model is based on spherical clustering, so that
                 the mean converges towards each centroids. Therefore, in case where
                 datasets have clear non-spherical trends as in the spectral image,
                 we can see that the k-means algorithm is ineffective. </p>
+                <button class = 'spectral' id = spectral>Generate</button>
+                <button class = 'cluster' id = clust4>Cluster</button>
+                <button class = 'centroid' id = cent4>Centroid</button>
             <h3>3. Over / Under Clustering</h3>
              <p>K-means clustering is an effective method when there are clear spherical
                clusters, but it is also important that the user must have a rough
@@ -133,6 +138,10 @@
                algorithm ends up over / under clustering. In the example, we see
                that even with clear clusters visible in the original data, the lack
                of centroids cause the algorithm to have strange clusters. </p>
+               <button class = 'overunder' id = overunder>3 Centers</button>
+               <button class = 'overunder2' id = overunder2>4 Centers</button>
+               <button class = 'cluster' id = clust5>Cluster</button>
+               <button class = 'centroid' id = cent5>Centroid</button>
             <h3>4. Adequate initial points</h3>
               <p>Finally, K-means clustering randomly initialize the clustering
                 centers, which can sometimes change the result of clustering. That
@@ -142,6 +151,11 @@
                 end up in different clustering results. What do you think about
                 the results? What are some of the risks of randomly initializing
                 cluster centers?</p>
+                <button class = 'adequate' id = adequate>Case 1</button>
+                <button class = 'adequate2' id = adequate2>Case 2</button>
+                <button class = 'cluster' id = clust6>Cluster</button>
+                <button class = 'centroid' id = cent6>Centroid</button>
+
             <h2>Conclusion</h2>
               <p>Due to its simplicity, the k-means algorithm delivers training
                 results quickly and effectively. However, as we seen in the above
