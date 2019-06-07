@@ -2,16 +2,14 @@ import React from 'react';
 import {csv} from 'd3-fetch';
 import {json} from 'd3';
 import {examples} from './example-chart';
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 import {transition} from 'd3-transition';
 import {symbol, symbolCross} from 'd3-shape';
 
 
-export function kmeans() {
-  config();
-}
 
-function config() {
+
+export function kmeans() {
   let clusters = [];
   let dataPoints = [];
   const width = 500;
@@ -66,12 +64,13 @@ function config() {
     });
 
     if (compareResult(origCenter, newCenter)) {
-      alert('Converged!')
+      selectAll(".centroid").attr("disabled", 'disabled');
+      selectAll(".cluster").attr("disabled", 'disabled');
+      alert('Converged!');
+    } else {
+    selectAll(".centroid").attr("disabled", 'disabled');
+    selectAll(".cluster").attr("disabled", null);
     }
-    select("#cent1").attr("disabled", "disabled");
-    select("#cent2").attr("disabled", "disabled");
-    select("#clust1").attr("disabled", null);
-    select("#clust2").attr("disabled", null);
   };
 
   function compareResult(origL, newL) {
@@ -103,10 +102,8 @@ function config() {
       group.dataPoints.push(point);
       point.group = group;
     });
-    select("#cent1").attr("disabled", null);
-    select("#cent2").attr("disabled", null);
-    select("#clust1").attr("disabled", "disabled");
-    select("#clust2").attr("disabled", "disabled");
+    selectAll(".centroid").attr("disabled", null);
+    selectAll(".cluster").attr("disabled", "disabled");
   }
 
   function draw() {
@@ -183,6 +180,7 @@ function config() {
       };
       dataPoints.push(point);
     }
+    select('#generate').attr("disabled", null);
   }
 
   function initCentroid() {
@@ -207,6 +205,7 @@ function config() {
       };
       clusters.push(g);
     }
+    selectAll(".cluster").attr("disabled", null);
   }
 
   function exampleGen(input) {
@@ -249,6 +248,7 @@ function config() {
       };
       clusters.push(g);
     }
+    selectAll(".cluster").attr("disabled", null);
   };
 
   function drawPremade() {
@@ -308,36 +308,16 @@ function config() {
     drawCenter(c.transition().duration(1000));
   }
 
-  select('#cent1').on('click', function() {updateCentroid(); draw(); });
-  select('#clust1').on('click', function() {updateCluster(); draw(); });
-  select('#new1').on('click', function() {wipeOut(); initData(); draw(); });
-  select('#gen1').on('click', function() {initCentroid(); draw(); });
-  select('#cent2').on('click', function() {updateCentroid(); draw(); });
-  select('#clust2').on('click', function() {updateCluster(); draw(); });
-  select('#restart1').on('click', function() {restart(); draw(); })
-  select('#mickey').on('click', function() {exampleGen('mickey'); drawPremade(); })
-  select('#spectral').on('click', function() {exampleGen('spectral'); drawPremade(); })
-  select('#overunder').on('click', function() {exampleGen('overunder'); drawPremade(); })
-  select('#overunder2').on('click', function() {exampleGen('overunder2'); drawPremade(); })
-  select('#adequate').on('click', function() {exampleGen('adequate'); drawPremade(); })
-  select('#adequate2').on('click', function() {exampleGen('adequate2'); drawPremade(); })
-  select('#cent3').on('click', function() {updateCentroid(); draw(); });
-  select('#clust3').on('click', function() {updateCluster(); draw(); });
-  select('#cent4').on('click', function() {updateCentroid(); draw(); });
-  select('#clust4').on('click', function() {updateCluster(); draw(); });
-  select('#cent5').on('click', function() {updateCentroid(); draw(); });
-  select('#clust5').on('click', function() {updateCluster(); draw(); });
-  select('#cent6').on('click', function() {updateCentroid(); draw(); });
-  select('#clust6').on('click', function() {updateCluster(); draw(); });
-  select('#gen2').on('click', function() {initCentroid(); draw(); });
+  selectAll('.centroid').on('click', function() {updateCentroid(); draw(); });
+  selectAll('.cluster').on('click', function() {updateCluster(); draw(); });
+  select('#new').on('click', function() {wipeOut(); initData(); draw(); });
+  selectAll('.generate').on('click', function() {initCentroid(); draw(); });
+  select('#mickey').on('click', function() {exampleGen('mickey'); drawPremade(); });
+  select('#spectral').on('click', function() {exampleGen('spectral'); drawPremade(); });
+  select('#overunder').on('click', function() {exampleGen('overunder'); drawPremade(); });
+  select('#overunder2').on('click', function() {exampleGen('overunder2'); drawPremade(); });
+  select('#adequate').on('click', function() {exampleGen('adequate'); drawPremade(); });
+  select('#adequate2').on('click', function() {exampleGen('adequate2'); drawPremade(); });
   initData(); draw();
 
 }
-
-/* 버튼 조정하는 법
-select("#centroid")
-  .style('padding', '.5em .8em')
-  .style('background-color', 'blue')
-  .style('color', 'white')
-  .style('font-size', '16px')
-*/

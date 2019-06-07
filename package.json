@@ -38,6 +38,7 @@
     "d3-transition": "^1.2.0",
     "domready": "^1.0.8",
     "flash": "^1.1.0",
+    "lint": "^0.6.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-vis": "^1.11.7"
