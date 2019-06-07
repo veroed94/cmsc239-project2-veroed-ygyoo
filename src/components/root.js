@@ -1,4 +1,3 @@
-import React from 'react';
 import {csv} from 'd3-fetch';
 import {json} from 'd3';
 import {examples} from './example-chart';
